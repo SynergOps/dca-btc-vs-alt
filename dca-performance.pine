@@ -16,12 +16,10 @@ var float maxDrawdown = 0
 var float drawdownStartPrice = na
 var float[] dailyReturns = array.new_float()
 var float initialPrice = na
-//var float buyAndHoldUnits = 0
-//var float buyAndHoldFees = 0
 var float totalInvestmentAmount = 0
 var float totalFeesPaid = 0
-// Calculate total investment periods and amount
 var int totalPeriods = 0
+
 if time >= startDate and time <= endDate
     // For daily, each period is 1 day (86400000 milliseconds)
     if dcaInterval == "Ημερήσια"
