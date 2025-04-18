@@ -1,5 +1,5 @@
 //@version=6
-strategy("DCA performance by Cerebrux", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, calc_on_every_tick=true, process_orders_on_close=true)
+strategy("DCA performance by Cerebrux", overlay=true, pyramiding=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, calc_on_every_tick=true, process_orders_on_close=true)
 
 // === Ρυθμίσεις Χρήστη ===
 investmentAmount = input.float(100, "Ποσό Επένδυσης (€)", minval=1)
@@ -50,7 +50,7 @@ if canInvest and close > 0
     totalFeesPaid += fee
     totalInvested += investmentAmount
     totalUnits += units
-    strategy.entry("DCA Buy", strategy.long, qty=units)
+    strategy.entry("DCA Buy"+ str.tostring(bar_index), strategy.long, qty=units)
     label.new(bar_index, low, "▲", style=label.style_label_up, color=color.green, textcolor=color.white, size=size.tiny)
 
 // === Calculations ===
@@ -238,7 +238,7 @@ if bar_index % 10 == 0 or na(bar_index)
     if showCAGR
         table.cell(statsTable, 0, 11, "📈 CAGR", text_color=color_white, bgcolor=color_gray)
         table.cell(statsTable, 1, 11, str.tostring(cagr * 100, "#.##") + "%", text_color=color_white, bgcolor=color_gray)
-
+    
     // Only show Calmar Ratio if enabled
     if showCalmarRatio
         table.cell(statsTable, 0, 12, "📊 Δείκτης Calmar", text_color=color_white, bgcolor=color_gray)
