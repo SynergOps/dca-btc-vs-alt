@@ -65,7 +65,17 @@ if currentValue > maxEquity
 else if drawdown < maxDrawdown
     maxDrawdown := drawdown
     drawdownStartPrice := close
-    label.new(bar_index, high, "Μέγιστη Πτώση ⚑", style=label.style_label_down, color=color.red, textcolor=color.white, size=size.tiny)
+    //label.new(bar_index, high, "Μέγιστη Πτώση ⚑", style=label.style_label_down, color=color.red, textcolor=color.white, size=size.tiny)
+
+// === Εμφάνιση μόνο του τελευταίου μέγιστου Drawdown ===
+var label lastMaxDrawdownLabel = na  // Αποθηκεύει την τελευταία ετικέτα
+
+if ta.change(maxDrawdown) != 0
+    // Διαγραφή της προηγούμενης ετικέτας αν υπάρχει
+    if not na(lastMaxDrawdownLabel)
+        label.delete(lastMaxDrawdownLabel)
+    // Δημιουργία νέας ετικέτας για το τελευταίο μέγιστο Drawdown
+    lastMaxDrawdownLabel := label.new(bar_index, low, "Μέγιστη Πτώση: " + str.tostring(maxDrawdown, "#.##") + "%", style=label.style_label_up, color=color.red, textcolor=color.white, size=size.normal)
 
 // Calculate average cost basis
 avgCostBasis = totalUnits > 0 ? totalInvested / totalUnits : na
