@@ -1,5 +1,5 @@
 //@version=6
-strategy("DCA performance by Cerebrux", overlay=true, pyramiding=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, calc_on_every_tick=true, process_orders_on_close=true)
+strategy("DCA performance by Cerebrux", overlay=true, pyramiding = 10000, default_qty_type=strategy.percent_of_equity, default_qty_value=100, calc_on_every_tick=true, process_orders_on_close=true)
 
 // === Ρυθμίσεις Χρήστη ===
 investmentAmount = input.float(100, "Ποσό Επένδυσης (€)", minval=1)
@@ -16,9 +16,33 @@ var float maxDrawdown = 0
 var float drawdownStartPrice = na
 var float[] dailyReturns = array.new_float()
 var float initialPrice = na
+//var float buyAndHoldUnits = 0
+//var float buyAndHoldFees = 0
 var float totalInvestmentAmount = 0
 var float totalFeesPaid = 0
+// Calculate total investment periods and amount
 var int totalPeriods = 0
+// === Performance Metrics ===
+var float[] monthlyReturns = array.new_float()
+var float previousMonthClose = na
+// Detect start of a new month
+isNewMonth = month != month[1]
+
+// Store previous month's close
+if isNewMonth
+    if not na(previousMonthClose) and not na(close)
+        monthlyReturn = (close - previousMonthClose) / previousMonthClose
+        array.push(monthlyReturns, monthlyReturn)
+    previousMonthClose := close
+
+// Monthly risk-free rate (~2% annual e.g. Gov Bonds)
+monthlyRiskFreeRate = 0.02 / 12
+
+isInvestmentTime = switch dcaInterval
+    "Ημερήσια" => dayofmonth != dayofmonth[1]
+    "Εβδομαδιαία" => dayofweek == dayofweek.monday and dayofweek != dayofweek[1]
+    "Μηνιαία" => month != month[1]
+    => false
 
 if time >= startDate and time <= endDate
     // For daily, each period is 1 day (86400000 milliseconds)
@@ -31,25 +55,26 @@ if time >= startDate and time <= endDate
     else if dcaInterval == "Μηνιαία"
         totalPeriods := math.floor((endDate - startDate) / (30 * 24 * 60 * 60 * 1000))
 
-totalInvestmentAmount := investmentAmount * totalPeriods
-
-isInvestmentTime = switch dcaInterval
-    "Ημερήσια" => dayofmonth != dayofmonth[1]
-    "Εβδομαδιαία" => dayofweek == dayofweek.monday and dayofweek != dayofweek[1]
-    "Μηνιαία" => month != month[1]
-    => false
-
 canInvest = time >= startDate and time <= endDate and isInvestmentTime
 
-if canInvest and close > 0
-    fee = investmentAmount * tradingFeePercent / 100
-    netInvestment = investmentAmount - fee
-    units = netInvestment / close
-    totalFeesPaid += fee
-    totalInvested += investmentAmount
-    totalUnits += units
-    strategy.entry("DCA Buy"+ str.tostring(bar_index), strategy.long, qty=units)
-    label.new(bar_index, low, "▲", style=label.style_label_up, color=color.green, textcolor=color.white, size=size.tiny)
+if canInvest
+    if isInvestmentTime
+        // Simulate a symbolic strategy entry so Strategy Tester shows trades
+        strategy.entry("DCA Buy", strategy.long, qty=investmentAmount / close)
+
+        // === Your existing logic continues here ===
+        totalInvested += investmentAmount
+        fee = investmentAmount * (tradingFeePercent / 100)
+        totalFeesPaid += fee
+        netInvestment = investmentAmount - fee
+        unitsBought = netInvestment / close
+        totalUnits += unitsBought
+        totalInvestmentAmount += investmentAmount
+        totalPeriods += 1
+
+        if na(initialPrice)
+            initialPrice := close
+totalInvestmentAmount := investmentAmount * totalPeriods
 
 // === Calculations ===
 currentValue = totalUnits * close
@@ -78,23 +103,6 @@ if ta.change(maxDrawdown) != 0
 // Calculate average cost basis
 avgCostBasis = totalUnits > 0 ? totalInvested / totalUnits : na
 plot(avgCostBasis, "Μέσο Κόστος Κτήσης", color=color.purple, style=plot.style_circles, linewidth=2)
-
-// === Performance Metrics ===
-var float[] monthlyReturns = array.new_float()
-var float previousMonthClose = na
-
-// Detect start of a new month
-isNewMonth = month != month[1]
-
-// Store previous month's close
-if isNewMonth
-    if not na(previousMonthClose) and not na(close)
-        monthlyReturn = (close - previousMonthClose) / previousMonthClose
-        array.push(monthlyReturns, monthlyReturn)
-    previousMonthClose := close
-
-// Monthly risk-free rate (~2% annual e.g. Gov Bonds)
-monthlyRiskFreeRate = 0.02 / 12
 
 // Ο Δείκτης Sharpe είναι ένα μέτρο απόδοσης προσαρμοσμένο στον κίνδυνο. Ποσοτικοποιεί πόση απόδοση παρέχει μια επένδυση σε σχέση με τον κίνδυνο που αναλαμβάνει.
 // Όταν χρησιμοποιείτε τη στρατηγική Dollar Cost Averaging (DCA), ο Δείκτης Sharpe μπορεί να βοηθήσει στην αξιολόγηση της αποτελεσματικότητας αυτής της στρατηγικής επένδυσης. Πώς:
