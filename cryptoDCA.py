@@ -12,40 +12,46 @@ import os
 from datetime import datetime
 from tabulate import tabulate
 
-# List of symbols and corresponding CSV filenames
+# Λίστα συμβόλων και αντίστοιχων ονομάτων αρχείων CSV
 symbols = ['BTC', 'ETH', 'LTC', 'XRP', 'ADA']
 csv_files = {sym: f'data/{sym}.csv' for sym in symbols}
-monthly_investment = 20  # Monthly investment amount in euros
+
+# Το μηνιαίο ποσό επένδυσης σε ευρώ
+monthly_investment = 100
+
+# Αποτελέσματα
 results = []
 
 for sym, path in csv_files.items():
+    # Παράλειψη συμβόλων χωρίς αρχεία CSV
     if not os.path.exists(path):
-        # Skip symbols without uploaded CSV
         continue
     
-    # Read CSV, parse dates
+    # Διάβασε το CSV και κάνε ανάλυση ημερομηνιών
     df = pd.read_csv(path, parse_dates=['Date'])
+    
+    # Ορισμός του index ως ημερομηνία
     df.set_index('Date', inplace=True)
     
-    # Sort the index to ensure it's monotonic
+    # Ταξινόμηση του index για να διασφαλιστεί ότι είναι μονοτονικός
     df.sort_index(inplace=True)
     
-    # Filter period Jan 2018 - Mar 2025
+    # Φιλτράρισμα περιόδου Ιαν 2018 - Μαρ 2025
     start, end = '2018-01-01', '2025-03-31'
     df = df.loc[start:end]
     
-    # Get month-end closing prices
+    # Λήψη τιμών κλεισίματος στο τέλος κάθε μήνα
     monthly_close = df['Close'].resample('ME').last()
     
-    # Calculate DCA: invested each month
+    # Υπολογισμός DCA: επένδυση κάθε μήνα
     coins_accumulated = (monthly_investment / monthly_close).cumsum()
-    print(f"Συγκεντρωμένα crypto για {sym}: {coins_accumulated.iloc[-1]}")
-    # Calculate total months and final price
+    
+    # Υπολογισμός συνολικών μηνών και τελικής τιμής
     total_months = len(monthly_close)
     total_invested = total_months * monthly_investment
     final_price = monthly_close.iloc[-1]
-    print(f"Τελική τιμή για {sym}: {final_price}")
-    # Calculate final value and ROI
+    
+    # Υπολογισμός τελικής αξίας και ROI
     final_value = coins_accumulated.iloc[-1] * final_price
     roi = (final_value - total_invested) / total_invested * 100
 
@@ -58,11 +64,10 @@ for sym, path in csv_files.items():
         'ROI (%)': round(roi, 2)
     })
 
-# Create DataFrame and display
+# Δημιουργία DataFrame και εμφάνιση
 results_df = pd.DataFrame(results)
-#tools.display_dataframe_to_user("DCA Performance (Jan 2018 – Mar 2025)", results_df)
 
-print("Επιδόσεις του DCA (Ιαν 2018 – Μαρ 2025)")
+print("\nΕπιδόσεις του DCA (Ιαν 2018 – Μαρ 2025)")
 print(tabulate(
     results_df, 
     headers='keys', 
