@@ -1,5 +1,5 @@
 //@version=6
-strategy("DCA performance by Cerebrux", overlay=true, pyramiding = 10000, default_qty_type=strategy.percent_of_equity, default_qty_value=100, calc_on_every_tick=true, process_orders_on_close=true)
+strategy("DCA performance by Cerebrux", overlay=true, pyramiding = 10000, default_qty_type=strategy.percent_of_equity, default_qty_value=100, process_orders_on_close=true)
 
 // === Ρυθμίσεις Χρήστη ===
 donationMessage = input.string("paypal.me/cerebrux", title="💙 Υποστηρίξτε μας", tooltip="Κάντε μια δωρεά για να υποστηρίξετε την ανάπτυξη αυτού του εργαλείου.")
@@ -17,8 +17,6 @@ var float maxDrawdown = 0
 var float drawdownStartPrice = na
 var float[] dailyReturns = array.new_float()
 var float initialPrice = na
-//var float buyAndHoldUnits = 0
-//var float buyAndHoldFees = 0
 var float totalInvestmentAmount = 0
 var float totalFeesPaid = 0
 // Calculate total investment periods and amount
@@ -208,7 +206,7 @@ if bar_index % 10 == 0 or na(bar_index)
     // Total Units
     if showTotalUnits
         table.cell(statsTable, 0, 4, "🪙 Συνολικές Μονάδες", text_color=color_white, bgcolor=color_gray)
-        table.cell(statsTable, 1, 4, str.tostring(totalUnits, format.mintick), text_color=color_white, bgcolor=color_gray)
+        table.cell(statsTable, 1, 4, str.tostring(totalUnits, "#.####"), text_color=color_white, bgcolor=color_gray)
 
     // Current Value
     if showCurrentValue
@@ -223,32 +221,32 @@ if bar_index % 10 == 0 or na(bar_index)
     // ROI
     if showROI
         table.cell(statsTable, 0, 7, "📊 Απόδοση Επένδυσης (ROI)", text_color=color_white, bgcolor=color_gray)
-        table.cell(statsTable, 1, 7, str.tostring(roi, "#.##") + "%", text_color=color_white, bgcolor=color_gray)
+        table.cell(statsTable, 1, 7, str.tostring(roi, format.mintick) + "%", text_color=color_white, bgcolor=color_gray)
 
     // Max Drawdown
     if showMaxDrawdown
         table.cell(statsTable, 0, 8, "📉 Μέγιστη Πτώση", text_color=color_white, bgcolor=color_gray)
-        table.cell(statsTable, 1, 8, str.tostring(maxDrawdown, "#.##") + "%", text_color=color_white, bgcolor=color_gray)
+        table.cell(statsTable, 1, 8, str.tostring(maxDrawdown, format.mintick) + "%", text_color=color_white, bgcolor=color_gray)
 
     // Only show Sharpe Ratio if enabled
     if showSharpeRatio
         table.cell(statsTable, 0, 9, "📊 Δείκτης Sharpe", text_color=color_white, bgcolor=color_gray)
-        table.cell(statsTable, 1, 9, str.tostring(sharpeRatio, "#.##"), text_color=color_white, bgcolor=color_gray)
+        table.cell(statsTable, 1, 9, str.tostring(sharpeRatio, "#.###"), text_color=color_white, bgcolor=color_gray)
 
     // Only show Sortino Ratio if enabled
     if showSortinoRatio
         table.cell(statsTable, 0, 10, "📊 Δείκτης Sortino", text_color=color_white, bgcolor=color_gray)
-        table.cell(statsTable, 1, 10, str.tostring(sortinoRatio, "#.##"), text_color=color_white, bgcolor=color_gray)
+        table.cell(statsTable, 1, 10, str.tostring(sortinoRatio, "#.###"), text_color=color_white, bgcolor=color_gray)
 
     // Only show CAGR if enabled
     if showCAGR
         table.cell(statsTable, 0, 11, "📈 CAGR", text_color=color_white, bgcolor=color_gray)
-        table.cell(statsTable, 1, 11, str.tostring(cagr * 100, "#.##") + "%", text_color=color_white, bgcolor=color_gray)
+        table.cell(statsTable, 1, 11, str.tostring(cagr * 100, "#.###") + "%", text_color=color_white, bgcolor=color_gray)
     
     // Only show Calmar Ratio if enabled
     if showCalmarRatio
         table.cell(statsTable, 0, 12, "📊 Δείκτης Calmar", text_color=color_white, bgcolor=color_gray)
-        table.cell(statsTable, 1, 12, str.tostring(calmarRatio, "#.##"), text_color=color_white, bgcolor=color_gray)
+        table.cell(statsTable, 1, 12, str.tostring(calmarRatio, "#.#####"), text_color=color_white, bgcolor=color_gray)
 
     // Only show Avg Cost Basis if enabled
     if showAvgCostBasis
