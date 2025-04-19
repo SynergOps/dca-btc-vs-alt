@@ -1,4 +1,6 @@
 //@version=6
+// Licensed under the GNU General Public License v3.0
+// Copyright Salih Emin
 strategy("DCA performance by Cerebrux", overlay=true, pyramiding = 10000, default_qty_type=strategy.percent_of_equity, default_qty_value=100, process_orders_on_close=true)
 
 // === Ρυθμίσεις Χρήστη ===
