@@ -73,7 +73,7 @@ if canInvest
     else 
         if time == endDate
             strategy.close_all()
-totalInvestmentAmount := investmentAmount * totalPeriods
+
 
 // === Calculations ===
 currentValue = totalUnits * close
@@ -81,10 +81,13 @@ profit = currentValue - totalInvested
 roi = totalInvested > 0 ? (profit / totalInvested) * 100 : na
 
 // Calculate drawdown
-drawdown = maxEquity > 0 ? (currentValue - maxEquity) / maxEquity * 100 : 0
+
 if currentValue > maxEquity
     maxEquity := currentValue
-else if drawdown < maxDrawdown
+
+drawdown = maxEquity > 0 ? (currentValue - maxEquity) / maxEquity * 100 : 0
+
+if drawdown < maxDrawdown
     maxDrawdown := drawdown
     drawdownStartPrice := close
 
