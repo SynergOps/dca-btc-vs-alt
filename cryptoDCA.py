@@ -75,3 +75,6 @@ print(tabulate(
     numalign='right',
     stralign='center'
 ))
+
+print("\nΑν σας άρεσε αυτό το εργαλείο, μπορείτε να κάνετε μια δωρεά:")
+print("PayPal: https://www.paypal.me/cerebrux")
