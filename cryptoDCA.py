@@ -13,7 +13,7 @@ from datetime import datetime
 from tabulate import tabulate
 
 # Λίστα συμβόλων και αντίστοιχων ονομάτων αρχείων CSV
-symbols = ['BTC', 'ETH', 'LTC', 'XRP', 'ADA']
+symbols = ['BTC', 'ETH', 'LTC', 'XRP', 'ADA', 'Gold-PAXG']
 csv_files = {sym: f'data/{sym}.csv' for sym in symbols}
 
 # Το μηνιαίο ποσό επένδυσης σε ευρώ
@@ -59,7 +59,7 @@ for sym, path in csv_files.items():
         'Σύμβολο': sym,
         'Μήνες': total_months,
         'Τελική Τιμή (€)': round(final_price, 2),
-        'Συγκεντρωμένα crypto': round(coins_accumulated.iloc[-1], 4),
+        'Συγκεντρωμένη ποσότητα': round(coins_accumulated.iloc[-1], 4),
         'Τελική Αξία Επένδυσης (€)': round(final_value, 2),
         'ROI (%)': round(roi, 2)
     })
@@ -77,4 +77,4 @@ print(tabulate(
 ))
 
 print("\nΑν σας άρεσε αυτό το εργαλείο, μπορείτε να κάνετε μια δωρεά:")
-print("PayPal: https://www.paypal.me/cerebrux")
+print("\n   PayPal: https://www.paypal.me/cerebrux\n")
