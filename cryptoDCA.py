@@ -12,6 +12,15 @@ import os
 from datetime import datetime
 from tabulate import tabulate
 
+def calculate_max_drawdown(prices):
+    """
+    Υπολογισμός μέγιστης πτώσης (Max Drawdown) από τις τιμές κλεισίματος.
+    """
+    cumulative_max = prices.cummax()  # Υπολογισμός σωρευτικού μέγιστου
+    drawdown = (prices - cumulative_max) / cumulative_max  # Υπολογισμός πτώσης
+    max_drawdown = drawdown.min() * 100  # Εύρεση μέγιστης πτώσης σε ποσοστό
+    return round(max_drawdown, 2)
+
 # Λίστα συμβόλων και αντίστοιχων ονομάτων αρχείων CSV
 symbols = ['BTC', 'ETH', 'LTC', 'XRP', 'ADA', 'Gold-PAXG']
 csv_files = {sym: f'data/{sym}.csv' for sym in symbols}
@@ -55,13 +64,17 @@ for sym, path in csv_files.items():
     final_value = coins_accumulated.iloc[-1] * final_price
     roi = (final_value - total_invested) / total_invested * 100
 
+    # Υπολογισμός μέγιστης πτώσης (Max Drawdown)
+    max_drawdown = calculate_max_drawdown(monthly_close)
+
     results.append({
         'Σύμβολο': sym,
         'Μήνες': total_months,
         'Τελική Τιμή (€)': round(final_price, 2),
         'Συγκεντρωμένη ποσότητα': round(coins_accumulated.iloc[-1], 4),
         'Τελική Αξία Επένδυσης (€)': round(final_value, 2),
-        'ROI (%)': round(roi, 2)
+        'ROI (%)': round(roi, 2),
+        'Max Drawdown (%)': max_drawdown
     })
 
 # Δημιουργία DataFrame και εμφάνιση
