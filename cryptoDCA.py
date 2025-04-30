@@ -74,7 +74,7 @@ for sym, path in csv_files.items():
         'Συγκεντρωμένη ποσότητα': round(coins_accumulated.iloc[-1], 4),
         'Τελική Αξία Επένδυσης (€)': round(final_value, 2),
         'ROI (%)': round(roi, 2),
-        'Max Drawdown (%)': max_drawdown
+        'Μέγιστη Πτώση (%)': max_drawdown
     })
 
 # Δημιουργία DataFrame και εμφάνιση
