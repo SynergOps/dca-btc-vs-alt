@@ -78,9 +78,9 @@ for sym, path in csv_files.items():
     results.append({
         'Σύμβολο': sym,
         'Μήνες': total_months,
-        'Τελική Τιμή (€)': round(final_price, 2),
+        'Τελευταία Τιμή (€)': round(final_price, 2),
         'Συγκεντρωμένη ποσότητα': round(coins_accumulated.iloc[-1], 4),
-        'Τελική Αξία (€)': round(final_value, 2),
+        'Αξία Επένδυσης (€)': round(final_value, 2),
         'ROI (%)': round(roi, 2),
         'CAGR (%)': cagr,
         'Sharpe': sharpe,
